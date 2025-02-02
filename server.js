@@ -8,13 +8,11 @@ const path = require("path");
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
-
 app.use(cors({
-    origin: "https://mi-frontend.up.railway.app", // Reemplaza con la URL de tu frontend
+    origin: "https://mi-frontend.up.railway.app",
     methods: ["GET", "POST", "DELETE"],
 }));
+
 
 // Configuración de la conexión a la base de datos
 const db = mysql.createConnection({
