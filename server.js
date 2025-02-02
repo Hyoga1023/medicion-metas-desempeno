@@ -1,23 +1,22 @@
-
-const express = require('express');
-import { json } from "body-parser";
-import { createConnection } from "mysql";
-import cors from "cors";
-import { writeFileSync, unlinkSync } from "fs";
-import { join } from "path";
+const express = require("express");
+const bodyParser = require("body-parser");
+const mysql = require("mysql");
+const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(json());
+app.use(bodyParser.json());
 
 // Configuración de la conexión a la base de datos
-const db = createConnection({
+const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
 });
 
 // Conexión a la base de datos
