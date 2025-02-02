@@ -21,6 +21,15 @@ document.getElementById("registro-form").addEventListener("submit", async (e) =>
         return;
     }
 
+    // Validar que la fecha no sea futura
+    const fechaInput = new Date(fecha);
+    const fechaActual = new Date();
+
+    if (fechaInput > fechaActual) {
+        Swal.fire("Advertencia", "La fecha no puede ser futura.", "warning");
+        return;
+    }
+
     // Preparar los datos para enviar
     const data = {
         usuario_inhouse,
@@ -30,7 +39,7 @@ document.getElementById("registro-form").addEventListener("submit", async (e) =>
         fecha,
         observacion,
     };
-    //mysql://root:iydDXXwObaOdjpVYiQhvhIpwBJaouzKF@monorail.proxy.rlwy.net:53930/railway
+
     // Enviar los datos al servidor
     try {
         const response = await fetch("http://localhost:3000/guardar", {
@@ -52,10 +61,3 @@ document.getElementById("registro-form").addEventListener("submit", async (e) =>
         Swal.fire("Error", "Hubo un problema con la conexión. Intenta de nuevo más tarde.", "error");
     }
 });
-const fechaInput = new Date(fecha);
-const fechaActual = new Date();
-
-if (fechaInput > fechaActual) {
-    Swal.fire("Advertencia", "La fecha no puede ser futura.", "warning");
-    return;
-}
