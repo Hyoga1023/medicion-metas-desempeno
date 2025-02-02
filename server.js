@@ -1,5 +1,5 @@
 
-import express from "express";
+const express = require('express');
 import { json } from "body-parser";
 import { createConnection } from "mysql";
 import cors from "cors";
