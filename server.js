@@ -11,6 +11,11 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+app.use(cors({
+    origin: "https://mi-frontend.up.railway.app", // Reemplaza con la URL de tu frontend
+    methods: ["GET", "POST", "DELETE"],
+}));
+
 // Configuración de la conexión a la base de datos
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
