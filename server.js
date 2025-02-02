@@ -1,7 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
 const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 
@@ -44,11 +47,6 @@ app.post("/guardar", (req, res) => {
     });
 });
 
-// Iniciar el servidor
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
 // Ruta para borrar todos los registros
 app.delete("/borrar-todo", (req, res) => {
     const sql = "DELETE FROM registros";
@@ -62,9 +60,8 @@ app.delete("/borrar-todo", (req, res) => {
         res.status(200).send("Todos los registros fueron borrados correctamente.");
     });
 });
-const fs = require("fs");
-const path = require("path");
 
+// Ruta para descargar los registros en un archivo CSV
 app.get("/descargar", (req, res) => {
     const sql = "SELECT * FROM registros";
     db.query(sql, (err, results) => {
@@ -77,12 +74,21 @@ app.get("/descargar", (req, res) => {
         const filePath = path.join(__dirname, "registros.csv");
         const csvContent = results.map(r => Object.values(r).join(",")).join("\n");
 
+        // Escribir el archivo CSV en el sistema de archivos
         fs.writeFileSync(filePath, csvContent);
 
-        // Enviar archivo
+        // Enviar el archivo al cliente
         res.download(filePath, "registros.csv", err => {
-            if (err) console.error("Error al enviar el archivo:", err);
-            fs.unlinkSync(filePath); // Borra el archivo después de descargarlo
+            if (err) {
+                console.error("Error al enviar el archivo:", err);
+            }
+            fs.unlinkSync(filePath); // Borra el archivo después de enviarlo
         });
     });
+});
+
+// Iniciar el servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
