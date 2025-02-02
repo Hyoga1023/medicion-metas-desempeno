@@ -30,7 +30,7 @@ document.getElementById("registro-form").addEventListener("submit", async (e) =>
         fecha,
         observacion,
     };
-
+    //mysql://root:iydDXXwObaOdjpVYiQhvhIpwBJaouzKF@monorail.proxy.rlwy.net:53930/railway
     // Enviar los datos al servidor
     try {
         const response = await fetch("http://localhost:3000/guardar", {
