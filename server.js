@@ -1,19 +1,19 @@
 require("dotenv").config();
-const express = require("express");
-const bodyParser = require("body-parser");
-const mysql = require("mysql");
-const cors = require("cors");
-const fs = require("fs");
-const path = require("path");
+import express from "express";
+import { json } from "body-parser";
+import { createConnection } from "mysql";
+import cors from "cors";
+import { writeFileSync, unlinkSync } from "fs";
+import { join } from "path";
 
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(json());
 
 // Configuración de la conexión a la base de datos
-const db = mysql.createConnection({
+const db = createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -71,18 +71,18 @@ app.get("/descargar", (req, res) => {
         }
 
         // Crear archivo CSV
-        const filePath = path.join(__dirname, "registros.csv");
+        const filePath = join(__dirname, "registros.csv");
         const csvContent = results.map(r => Object.values(r).join(",")).join("\n");
 
         // Escribir el archivo CSV en el sistema de archivos
-        fs.writeFileSync(filePath, csvContent);
+        writeFileSync(filePath, csvContent);
 
         // Enviar el archivo al cliente
         res.download(filePath, "registros.csv", err => {
             if (err) {
                 console.error("Error al enviar el archivo:", err);
             }
-            fs.unlinkSync(filePath); // Borra el archivo después de enviarlo
+            unlinkSync(filePath); // Borra el archivo después de enviarlo
         });
     });
 });
