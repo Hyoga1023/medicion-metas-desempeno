@@ -1,4 +1,4 @@
-// app.js
+// app.js (FRONTEND - SIN IMPORTACIONES DE MÓDULOS DE NODEJS)
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('registro-form');
     
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Agregar eventos para botones de descargar y borrar
+    // Evento para botón de descargar
     document.getElementById('descargar').addEventListener('click', async () => {
         try {
             const response = await fetch('/descargar');
@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Evento para botón de borrar
     document.getElementById('borrar').addEventListener('click', async () => {
         try {
             const result = await Swal.fire({

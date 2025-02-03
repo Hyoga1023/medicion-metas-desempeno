@@ -4,7 +4,6 @@ const mysql = require('mysql');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
-const fs = require('fs');
 
 dotenv.config();
 
@@ -14,7 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static('public')); 
 
 // Database Connection
 const db = mysql.createConnection({
