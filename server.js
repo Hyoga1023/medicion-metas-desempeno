@@ -1,10 +1,11 @@
-import express from "express";
-import bodyParser from "body-parser";
-import mysql from "mysql";
-import cors from "cors";
-import dotenv from "dotenv";
+import express from 'express';
+import bodyParser from 'body-parser';
+import mysql from 'mysql';
+import cors from 'cors';
+import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { writeFileSync, unlinkSync } from 'fs';
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 // Database Connection
 const db = mysql.createConnection({
@@ -93,7 +95,9 @@ app.get("/descargar", (req, res) => {
         });
     });
 });
-
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
