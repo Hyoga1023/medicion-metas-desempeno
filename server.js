@@ -1,9 +1,10 @@
 import express from "express";
+import bodyParser from "body-parser";
 import mysql from "mysql";
 import cors from "cors";
-import { join } from "path";
-import { writeFileSync, unlinkSync } from "fs";
 import dotenv from "dotenv";
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 dotenv.config();
 
@@ -73,8 +74,12 @@ app.get("/descargar", (req, res) => {
         }
 
         // Crear archivo CSV
-        const filePath = join(__dirname, "registros.csv");
-        const csvContent = results.map(r => Object.values(r).join(",")).join("\n");
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+
+        dotenv.config();
+
+        const app = express();
 
         // Escribir el archivo CSV en el sistema de archivos
         writeFileSync(filePath, csvContent);
