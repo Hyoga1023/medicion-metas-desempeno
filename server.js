@@ -1,11 +1,10 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import mysql from 'mysql';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import { writeFileSync, unlinkSync } from 'fs';
+const express = require('express');
+const bodyParser = require('body-parser');
+const mysql = require('mysql');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 
