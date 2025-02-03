@@ -1,20 +1,20 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const mysql = require("mysql");
-const cors = require("cors");
-const fs = require("fs");
-const path = require("path");
+import express from "express";
+import mysql from "mysql";
+import cors from "cors";
+import { join } from "path";
+import { writeFileSync, unlinkSync } from "fs";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(cors({
-    origin: "https://mi-frontend.up.railway.app",
-    methods: ["GET", "POST", "DELETE"],
-}));
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-
-// Configuración de la conexión a la base de datos
+// Database Connection
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -22,7 +22,6 @@ const db = mysql.createConnection({
     database: process.env.DB_NAME,
 });
 
-// Conexión a la base de datos
 db.connect(err => {
     if (err) {
         console.error("Error al conectar a la base de datos:", err);
@@ -30,6 +29,7 @@ db.connect(err => {
     }
     console.log("Conectado a la base de datos.");
 });
+
 
 // Ruta para guardar datos
 app.post("/guardar", (req, res) => {
