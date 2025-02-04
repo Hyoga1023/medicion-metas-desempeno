@@ -1,4 +1,4 @@
-// app.js (FRONTEND - SIN IMPORTACIONES DE MÓDULOS DE NODEJS)
+// app.js
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('registro-form');
     
