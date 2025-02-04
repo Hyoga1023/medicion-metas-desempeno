@@ -9,11 +9,19 @@ dotenv.config();
 
 const app = express();
 
+const corsOptions = {
+    origin: 'https://hyoga1023.github.io', 
+    methods: ['GET', 'POST', 'DELETE'],  
+    allowedHeaders: ['Content-Type'],   
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public')); 
+app.options('*', cors(corsOptions));
+
 
 // Database Connection
 const db = mysql.createConnection({
