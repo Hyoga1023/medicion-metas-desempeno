@@ -13,8 +13,9 @@ const app = express();
 // Configuración de CORS
 const corsOptions = {
     origin: 'https://hyoga1023.github.io',
-    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'], 
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
+    credentials: true, // Si necesitas enviar credenciales (cookies, tokens)
 };
 
 // Middleware
@@ -24,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Manejar solicitudes OPTIONS para todas las rutas
-app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions)); // Esto asegura que todas las rutas manejen OPTIONS
 
 // Conexión a la base de datos
 const db = mysql.createConnection({
@@ -44,6 +45,11 @@ db.connect(err => {
 
 // Ruta para guardar datos
 app.post("/guardar", (req, res) => {
+    // Asegúrate de que los encabezados CORS estén presentes en la respuesta
+    res.header('Access-Control-Allow-Origin', 'https://hyoga1023.github.io');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
     const { usuario_inhouse, tipo_id, numero_id, nombre_afiliado, fecha, observacion } = req.body;
     const sql = `
         INSERT INTO registros (usuario_inhouse, tipo_id, numero_id, nombre_afiliado, fecha, observacion)
@@ -62,6 +68,10 @@ app.post("/guardar", (req, res) => {
 
 // Ruta para borrar todos los registros
 app.delete("/borrar-todo", (req, res) => {
+    res.header('Access-Control-Allow-Origin', 'https://hyoga1023.github.io');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
     const sql = "DELETE FROM registros";
 
     db.query(sql, (err, result) => {
@@ -76,6 +86,10 @@ app.delete("/borrar-todo", (req, res) => {
 
 // Ruta para descargar los registros en un archivo CSV
 app.get("/descargar", (req, res) => {
+    res.header('Access-Control-Allow-Origin', 'https://hyoga1023.github.io');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
     const sql = "SELECT * FROM registros";
     db.query(sql, (err, results) => {
         if (err) {
