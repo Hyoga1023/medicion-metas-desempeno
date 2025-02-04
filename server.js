@@ -4,26 +4,29 @@ const mysql = require('mysql');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const { writeFileSync, unlinkSync } = require('fs');
 
 dotenv.config();
 
 const app = express();
 
+// Configuración de CORS
 const corsOptions = {
-    origin: 'https://hyoga1023.github.io', 
-    methods: ['GET', 'POST', 'DELETE'],  
-    allowedHeaders: ['Content-Type'],   
+    origin: 'https://hyoga1023.github.io',
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'], 
+    allowedHeaders: ['Content-Type'],
 };
 
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public')); 
+app.use(express.static('public'));
+
+// Manejar solicitudes OPTIONS para todas las rutas
 app.options('*', cors(corsOptions));
 
-
-// Database Connection
+// Conexión a la base de datos
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -38,7 +41,6 @@ db.connect(err => {
     }
     console.log("Conectado a la base de datos.");
 });
-
 
 // Ruta para guardar datos
 app.post("/guardar", (req, res) => {
@@ -82,12 +84,11 @@ app.get("/descargar", (req, res) => {
         }
 
         // Crear archivo CSV
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = path.dirname(__filename);
+        const csvContent = results.map(row => 
+            Object.values(row).join(',')
+        ).join('\n');
 
-        dotenv.config();
-
-        const app = express();
+        const filePath = path.join(__dirname, 'registros.csv');
 
         // Escribir el archivo CSV en el sistema de archivos
         writeFileSync(filePath, csvContent);
@@ -101,9 +102,12 @@ app.get("/descargar", (req, res) => {
         });
     });
 });
+
+// Ruta principal para servir el archivo HTML
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
