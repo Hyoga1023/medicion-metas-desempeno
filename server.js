@@ -15,7 +15,7 @@ const corsOptions = {
     origin: 'https://hyoga1023.github.io',
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
-    credentials: true, // Si necesitas enviar credenciales (cookies, tokens)
+    credentials: true,
 };
 
 // Middleware
@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Manejar solicitudes OPTIONS para todas las rutas
-app.options('*', cors(corsOptions)); // Esto asegura que todas las rutas manejen OPTIONS
+app.options('*', cors(corsOptions));
 
 // Conexión a la base de datos
 const db = mysql.createConnection({
@@ -45,12 +45,13 @@ db.connect(err => {
 
 // Ruta para guardar datos
 app.post("/guardar", (req, res) => {
-    // Asegúrate de que los encabezados CORS estén presentes en la respuesta
-    res.header('Access-Control-Allow-Origin', 'https://hyoga1023.github.io');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-
     const { usuario_inhouse, tipo_id, numero_id, nombre_afiliado, fecha, observacion } = req.body;
+
+    // Validar que todos los campos estén presentes
+    if (!usuario_inhouse || !tipo_id || !numero_id || !nombre_afiliado || !fecha || !observacion) {
+        return res.status(400).json({ error: "Todos los campos son obligatorios." });
+    }
+
     const sql = `
         INSERT INTO registros (usuario_inhouse, tipo_id, numero_id, nombre_afiliado, fecha, observacion)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -59,42 +60,32 @@ app.post("/guardar", (req, res) => {
     db.query(sql, [usuario_inhouse, tipo_id, numero_id, nombre_afiliado, fecha, observacion], (err, result) => {
         if (err) {
             console.error("Error al guardar datos:", err);
-            res.status(500).send("Error en el servidor.");
-            return;
+            return res.status(500).json({ error: "Error en el servidor al guardar los datos." });
         }
-        res.status(200).send("Datos guardados correctamente.");
+        res.status(200).json({ message: "Datos guardados correctamente." });
     });
 });
 
 // Ruta para borrar todos los registros
 app.delete("/borrar-todo", (req, res) => {
-    res.header('Access-Control-Allow-Origin', 'https://hyoga1023.github.io');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-
     const sql = "DELETE FROM registros";
 
     db.query(sql, (err, result) => {
         if (err) {
             console.error("Error al borrar los registros:", err);
-            res.status(500).send("Error en el servidor.");
-            return;
+            return res.status(500).json({ error: "Error en el servidor al borrar los registros." });
         }
-        res.status(200).send("Todos los registros fueron borrados correctamente.");
+        res.status(200).json({ message: "Todos los registros fueron borrados correctamente." });
     });
 });
 
 // Ruta para descargar los registros en un archivo CSV
 app.get("/descargar", (req, res) => {
-    res.header('Access-Control-Allow-Origin', 'https://hyoga1023.github.io');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-
     const sql = "SELECT * FROM registros";
     db.query(sql, (err, results) => {
         if (err) {
             console.error("Error al obtener los registros:", err);
-            return res.status(500).send("Error en el servidor.");
+            return res.status(500).json({ error: "Error en el servidor al obtener los registros." });
         }
 
         // Crear archivo CSV

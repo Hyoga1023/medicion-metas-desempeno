@@ -29,12 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify(data),
             });
-
+        
+            const result = await response.json();
+        
             if (response.ok) {
-                Swal.fire('Éxito', 'Datos guardados correctamente', 'success');
+                Swal.fire('Éxito', result.message, 'success');
                 form.reset();
             } else {
-                Swal.fire('Error', 'No se pudieron guardar los datos', 'error');
+                Swal.fire('Error', result.error || 'No se pudieron guardar los datos', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
