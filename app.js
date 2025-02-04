@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await fetch('http://app-b0f016c6-1a99-4b20-9f3b-d390d5fe4ca6.cleverapps.io/guardar', {
+            const response = await fetch('https://app-b0f016c6-1a99-4b20-9f3b-d390d5fe4ca6.cleverapps.io/guardar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Evento para botón de descargar
     document.getElementById('descargar').addEventListener('click', async () => {
         try {
-            const response = await fetch('http://app-b0f016c6-1a99-4b20-9f3b-d390d5fe4ca6.cleverapps.io/descargar');
+            const response = await fetch('https://app-b0f016c6-1a99-4b20-9f3b-d390d5fe4ca6.cleverapps.io/descargar');
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (result.isConfirmed) {
-                const response = await fetch('http://app-b0f016c6-1a99-4b20-9f3b-d390d5fe4ca6.cleverapps.io/borrar-todo', { method: 'DELETE' });
+                const response = await fetch('https://app-b0f016c6-1a99-4b20-9f3b-d390d5fe4ca6.cleverapps.io/borrar-todo', { method: 'DELETE' });
                 if (response.ok) {
                     Swal.fire('Eliminado', 'Todos los registros han sido borrados', 'success');
                 } else {
