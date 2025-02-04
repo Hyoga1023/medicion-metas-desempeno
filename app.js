@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await fetch('https://medicion-metas-desempeno-production.up.railway.app/guardar', {
+            const response = await fetch('https://bht1c1naxikbuzgqpmoo-mysql.services.clever-cloud.com/guardar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Evento para botón de descargar
     document.getElementById('descargar').addEventListener('click', async () => {
         try {
-            const response = await fetch('https://medicion-metas-desempeno-production.up.railway.app/descargar');
+            const response = await fetch('https://bht1c1naxikbuzgqpmoo-mysql.services.clever-cloud.com/descargar');
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (result.isConfirmed) {
-                const response = await fetch('https://medicion-metas-desempeno-production.up.railway.app/borrar-todo', { method: 'DELETE' });
+                const response = await fetch('https://bht1c1naxikbuzgqpmoo-mysql.services.clever-cloud.com/borrar-todo', { method: 'DELETE' });
                 if (response.ok) {
                     Swal.fire('Eliminado', 'Todos los registros han sido borrados', 'success');
                 } else {
