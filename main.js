@@ -54,6 +54,7 @@ form.addEventListener("submit", (e) => {
     nombre: form.nombre.value,
     fecha: form.fecha.value,
     observacion: form.observacion.value,
+    horaCreacion: new Date().toLocaleString()  // Agregar la hora de creación del registro
   };
 
   // Agregar los datos a la base de datos IndexedDB
