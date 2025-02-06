@@ -81,10 +81,21 @@ descargarBtn.addEventListener("click", () => {
     Swal.fire("Advertencia", "No hay datos para descargar.", "warning");
     return;
   }
-  const worksheet = XLSX.utils.json_to_sheet(registros); // Crear hoja de cálculo
+
+  // Crear una copia de los registros y asegurarse de que la hora de creación esté en el formato correcto
+  const registrosConHora = registros.map((registro) => {
+    return {
+      ...registro,
+      horaCreacion: new Date(registro.horaCreacion).toLocaleString()  // Asegura que la hora esté en formato correcto
+    };
+  });
+
+  const worksheet = XLSX.utils.json_to_sheet(registrosConHora); // Crear hoja de cálculo con los datos actualizados
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Registros");
-  XLSX.writeFile(workbook, "registros_inhouse.xlsx"); // Descargar archivo
+
+  // Descargar archivo Excel
+  XLSX.writeFile(workbook, "registros_inhouse.xlsx");
   Swal.fire("¡Listo!", "El archivo Excel se descargó correctamente.", "success");
 });
 
