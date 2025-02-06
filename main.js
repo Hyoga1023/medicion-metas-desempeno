@@ -5,11 +5,44 @@ const descargarBtn = document.getElementById("descargar");
 const borrarBtn = document.getElementById("borrar");
 let registros = []; // Array para almacenar los datos del formulario
 
-// Recupera los registros guardados en LocalStorage al cargar la página
-document.addEventListener("DOMContentLoaded", () => {
-  const registrosGuardados = JSON.parse(localStorage.getItem("registros")) || [];
-  registros = registrosGuardados; // Cargar los registros desde LocalStorage
-});
+// Abrir (o crear) la base de datos IndexedDB llamada "miBaseDeDatos"
+const request = indexedDB.open("miBaseDeDatos", 1);
+
+request.onerror = function (event) {
+  console.log("Error al abrir la base de datos", event);
+};
+
+request.onsuccess = function (event) {
+  console.log("Base de datos abierta con éxito", event.target.result);
+  cargarRegistros();  // Cargar los registros desde IndexedDB cuando la base de datos esté lista
+};
+
+request.onupgradeneeded = function (event) {
+  const db = event.target.result;
+
+  // Crear un objeto almacén de datos llamado "registros"
+  const store = db.createObjectStore("registros", { keyPath: "id", autoIncrement: true });
+
+  // Crear índices en el almacén para hacer consultas rápidas (si los necesitas)
+  store.createIndex("nombre", "nombre", { unique: false });
+};
+
+// Recupera los registros guardados en IndexedDB al cargar la página
+function cargarRegistros() {
+  const db = request.result;
+  const transaction = db.transaction(["registros"]);
+  const store = transaction.objectStore("registros");
+
+  const getAllRequest = store.getAll();  // Obtener todos los registros
+
+  getAllRequest.onsuccess = function (event) {
+    registros = event.target.result;  // Guardar los registros en memoria
+  };
+
+  getAllRequest.onerror = function (event) {
+    console.log("Error al cargar los registros", event);
+  };
+}
 
 // Evento para enviar los datos del formulario y añadirlos al array
 form.addEventListener("submit", (e) => {
@@ -22,11 +55,23 @@ form.addEventListener("submit", (e) => {
     fecha: form.fecha.value,
     observacion: form.observacion.value,
   };
-  registros.push(data); // Añadir datos al array
-  // Guardar los registros actualizados en LocalStorage
-  localStorage.setItem("registros", JSON.stringify(registros));
+
+  // Agregar los datos a la base de datos IndexedDB
+  const db = request.result;
+  const transaction = db.transaction(["registros"], "readwrite");
+  const store = transaction.objectStore("registros");
+  const addRequest = store.add(data);
+
+  addRequest.onsuccess = () => {
+    registros.push(data);  // Añadir datos al array en memoria
+    Swal.fire("¡Genial!", "El registro se guardó correctamente.", "success");
+  };
+
+  addRequest.onerror = () => {
+    console.log("Error al agregar el registro.");
+  };
+
   form.reset();
-  Swal.fire("¡Genial!", "El registro se guardó correctamente.", "success");
 });
 
 // Evento para descargar el archivo Excel
@@ -42,9 +87,20 @@ descargarBtn.addEventListener("click", () => {
   Swal.fire("¡Listo!", "El archivo Excel se descargó correctamente.", "success");
 });
 
-// Evento para borrar los datos almacenados en el array y LocalStorage (reset)
+// Evento para borrar los datos almacenados en IndexedDB (reset)
 borrarBtn.addEventListener("click", () => {
-  registros = [];  // Vaciar el array en memoria
-  localStorage.removeItem("registros"); // Eliminar registros del LocalStorage
-  Swal.fire("¡Listo!", "Los datos han sido borrados.", "success");
+  const db = request.result;
+  const transaction = db.transaction(["registros"], "readwrite");
+  const store = transaction.objectStore("registros");
+
+  const clearRequest = store.clear();  // Borrar todos los registros de la base de datos
+
+  clearRequest.onsuccess = function () {
+    registros = [];  // Vaciar el array en memoria
+    Swal.fire("¡Listo!", "Los datos han sido borrados.", "success");
+  };
+
+  clearRequest.onerror = function () {
+    console.log("Error al borrar los registros");
+  };
 });
