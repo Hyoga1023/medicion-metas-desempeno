@@ -100,19 +100,52 @@ descargarBtn.addEventListener("click", () => {
 });
 
 // Evento para borrar los datos almacenados en IndexedDB (reset)
+// Evento para borrar los datos almacenados en IndexedDB (reset)
 borrarBtn.addEventListener("click", () => {
-  const db = request.result;
-  const transaction = db.transaction(["registros"], "readwrite");
-  const store = transaction.objectStore("registros");
+  Swal.fire({
+    title: "¡Advertencia!",
+    text: "Estás a punto de borrar todos los registros y el mundo como lo conoces podria desaparecer!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, borrar",
+    cancelButtonText: "Cancelar",
+    reverseButtons: true,
+    background: "var(--color-negro)",
+    color: "var(--color-blanco)",
+    confirmButtonColor: "var(--color-terciario)",
+    cancelButtonColor: "var(--color-cuaternario)"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const db = request.result;
+      const transaction = db.transaction(["registros"], "readwrite");
+      const store = transaction.objectStore("registros");
 
-  const clearRequest = store.clear();  // Borrar todos los registros de la base de datos
+      const clearRequest = store.clear(); // Borrar todos los registros de la base de datos
 
-  clearRequest.onsuccess = function () {
-    registros = [];  // Vaciar el array en memoria
-    Swal.fire("¡Listo!", "Los datos han sido borrados.", "success");
-  };
+      clearRequest.onsuccess = function () {
+        registros = []; // Vaciar el array en memoria
+        Swal.fire({
+          title: "¡Listo!",
+          text: "Los datos han sido borrados.",
+          icon: "success",
+          background: "var(--color-negro)",
+          color: "var(--color-blanco)",
+          confirmButtonColor: "var(--color-terciario)"
+        });
+      };
 
-  clearRequest.onerror = function () {
-    console.log("Error al borrar los registros");
-  };
+      clearRequest.onerror = function () {
+        console.log("Error al borrar los registros");
+        Swal.fire({
+          title: "Error",
+          text: "Hubo un problema al intentar borrar los registros.",
+          icon: "error",
+          background: "var(--color-negro)",
+          color: "var(--color-blanco)",
+          confirmButtonColor: "var(--color-cuaternario)"
+        });
+      };
+    }
+  });
 });
+
