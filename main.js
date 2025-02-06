@@ -145,4 +145,3 @@ borrarBtn.addEventListener("click", () => {
     }
   });
 });
-
