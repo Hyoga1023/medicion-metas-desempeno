@@ -52,7 +52,6 @@ form.addEventListener("submit", (e) => {
     tipoId: form["tipo-id"].value,
     numeroId: form["numero-id"].value,
     nombre: form.nombre.value,
-    fecha: form.fecha.value,
     observacion: form.observacion.value,
     horaCreacion: new Date().toLocaleString()  // Agregar la hora de creación del registro
   };
@@ -98,8 +97,6 @@ descargarBtn.addEventListener("click", () => {
   XLSX.writeFile(workbook, "registros_inhouse.xlsx");
   Swal.fire("¡Listo!", "El archivo Excel se descargó correctamente.", "success");
 });
-
-// Evento para borrar los datos almacenados en IndexedDB (reset)
 // Evento para borrar los datos almacenados en IndexedDB (reset)
 borrarBtn.addEventListener("click", () => {
   Swal.fire({
